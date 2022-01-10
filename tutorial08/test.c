@@ -35,7 +35,8 @@ static int test_pass = 0;
 #define EXPECT_EQ_SIZE_T(expect, actual) EXPECT_EQ_BASE((expect) == (actual), (size_t)expect, (size_t)actual, "%zu")
 #endif
 
-static void test_parse_null() {
+static void test_parse_null()
+{
     lept_value v;
     lept_init(&v);
     lept_set_boolean(&v, 0);
@@ -44,7 +45,8 @@ static void test_parse_null() {
     lept_free(&v);
 }
 
-static void test_parse_true() {
+static void test_parse_true()
+{
     lept_value v;
     lept_init(&v);
     lept_set_boolean(&v, 0);
@@ -53,7 +55,8 @@ static void test_parse_true() {
     lept_free(&v);
 }
 
-static void test_parse_false() {
+static void test_parse_false()
+{
     lept_value v;
     lept_init(&v);
     lept_set_boolean(&v, 1);
@@ -72,7 +75,8 @@ static void test_parse_false() {
         lept_free(&v);\
     } while(0)
 
-static void test_parse_number() {
+static void test_parse_number()
+{
     TEST_NUMBER(0.0, "0");
     TEST_NUMBER(0.0, "-0");
     TEST_NUMBER(0.0, "-0.0");
@@ -114,7 +118,8 @@ static void test_parse_number() {
         lept_free(&v);\
     } while(0)
 
-static void test_parse_string() {
+static void test_parse_string()
+{
     TEST_STRING("", "\"\"");
     TEST_STRING("Hello", "\"Hello\"");
     TEST_STRING("Hello\nWorld", "\"Hello\\nWorld\"");
@@ -127,7 +132,8 @@ static void test_parse_string() {
     TEST_STRING("\xF0\x9D\x84\x9E", "\"\\ud834\\udd1e\"");  /* G clef sign U+1D11E */
 }
 
-static void test_parse_array() {
+static void test_parse_array()
+{
     size_t i, j;
     lept_value v;
 
@@ -167,7 +173,8 @@ static void test_parse_array() {
     lept_free(&v);
 }
 
-static void test_parse_object() {
+static void test_parse_object()
+{
     lept_value v;
     size_t i;
 
@@ -179,16 +186,16 @@ static void test_parse_object() {
 
     lept_init(&v);
     EXPECT_EQ_INT(LEPT_PARSE_OK, lept_parse(&v,
-        " { "
-        "\"n\" : null , "
-        "\"f\" : false , "
-        "\"t\" : true , "
-        "\"i\" : 123 , "
-        "\"s\" : \"abc\", "
-        "\"a\" : [ 1, 2, 3 ],"
-        "\"o\" : { \"1\" : 1, \"2\" : 2, \"3\" : 3 }"
-        " } "
-    ));
+                                            " { "
+                                            "\"n\" : null , "
+                                            "\"f\" : false , "
+                                            "\"t\" : true , "
+                                            "\"i\" : 123 , "
+                                            "\"s\" : \"abc\", "
+                                            "\"a\" : [ 1, 2, 3 ],"
+                                            "\"o\" : { \"1\" : 1, \"2\" : 2, \"3\" : 3 }"
+                                            " } "
+                                           ));
     EXPECT_EQ_INT(LEPT_OBJECT, lept_get_type(&v));
     EXPECT_EQ_SIZE_T(7, lept_get_object_size(&v));
     EXPECT_EQ_STRING("n", lept_get_object_key(&v, 0), lept_get_object_key_length(&v, 0));
@@ -236,12 +243,14 @@ static void test_parse_object() {
         lept_free(&v);\
     } while(0)
 
-static void test_parse_expect_value() {
+static void test_parse_expect_value()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_EXPECT_VALUE, "");
     TEST_PARSE_ERROR(LEPT_PARSE_EXPECT_VALUE, " ");
 }
 
-static void test_parse_invalid_value() {
+static void test_parse_invalid_value()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_VALUE, "nul");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_VALUE, "?");
 
@@ -260,7 +269,8 @@ static void test_parse_invalid_value() {
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_VALUE, "[\"a\", nul]");
 }
 
-static void test_parse_root_not_singular() {
+static void test_parse_root_not_singular()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "null x");
 
     /* invalid number */
@@ -269,29 +279,34 @@ static void test_parse_root_not_singular() {
     TEST_PARSE_ERROR(LEPT_PARSE_ROOT_NOT_SINGULAR, "0x123");
 }
 
-static void test_parse_number_too_big() {
+static void test_parse_number_too_big()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "1e309");
     TEST_PARSE_ERROR(LEPT_PARSE_NUMBER_TOO_BIG, "-1e309");
 }
 
-static void test_parse_miss_quotation_mark() {
+static void test_parse_miss_quotation_mark()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_QUOTATION_MARK, "\"");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_QUOTATION_MARK, "\"abc");
 }
 
-static void test_parse_invalid_string_escape() {
+static void test_parse_invalid_string_escape()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\v\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\'\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\0\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_ESCAPE, "\"\\x12\"");
 }
 
-static void test_parse_invalid_string_char() {
+static void test_parse_invalid_string_char()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_CHAR, "\"\x01\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_STRING_CHAR, "\"\x1F\"");
 }
 
-static void test_parse_invalid_unicode_hex() {
+static void test_parse_invalid_unicode_hex()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX, "\"\\u\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX, "\"\\u0\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX, "\"\\u01\"");
@@ -307,7 +322,8 @@ static void test_parse_invalid_unicode_hex() {
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_HEX, "\"\\u 123\"");
 }
 
-static void test_parse_invalid_unicode_surrogate() {
+static void test_parse_invalid_unicode_surrogate()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE, "\"\\uD800\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE, "\"\\uDBFF\"");
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE, "\"\\uD800\\\\\"");
@@ -315,14 +331,16 @@ static void test_parse_invalid_unicode_surrogate() {
     TEST_PARSE_ERROR(LEPT_PARSE_INVALID_UNICODE_SURROGATE, "\"\\uD800\\uE000\"");
 }
 
-static void test_parse_miss_comma_or_square_bracket() {
+static void test_parse_miss_comma_or_square_bracket()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, "[1");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, "[1}");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, "[1 2");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_SQUARE_BRACKET, "[[]");
 }
 
-static void test_parse_miss_key() {
+static void test_parse_miss_key()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_KEY, "{:1,");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_KEY, "{1:1,");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_KEY, "{true:1,");
@@ -333,19 +351,22 @@ static void test_parse_miss_key() {
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_KEY, "{\"a\":1,");
 }
 
-static void test_parse_miss_colon() {
+static void test_parse_miss_colon()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COLON, "{\"a\"}");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COLON, "{\"a\",\"b\"}");
 }
 
-static void test_parse_miss_comma_or_curly_bracket() {
+static void test_parse_miss_comma_or_curly_bracket()
+{
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1]");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":1 \"b\"");
     TEST_PARSE_ERROR(LEPT_PARSE_MISS_COMMA_OR_CURLY_BRACKET, "{\"a\":{}");
 }
 
-static void test_parse() {
+static void test_parse()
+{
     test_parse_null();
     test_parse_true();
     test_parse_false();
@@ -382,7 +403,8 @@ static void test_parse() {
         free(json2);\
     } while(0)
 
-static void test_stringify_number() {
+static void test_stringify_number()
+{
     TEST_ROUNDTRIP("0");
     TEST_ROUNDTRIP("-0");
     TEST_ROUNDTRIP("1");
@@ -405,7 +427,8 @@ static void test_stringify_number() {
     TEST_ROUNDTRIP("-1.7976931348623157e+308");
 }
 
-static void test_stringify_string() {
+static void test_stringify_string()
+{
     TEST_ROUNDTRIP("\"\"");
     TEST_ROUNDTRIP("\"Hello\"");
     TEST_ROUNDTRIP("\"Hello\\nWorld\"");
@@ -413,17 +436,20 @@ static void test_stringify_string() {
     TEST_ROUNDTRIP("\"Hello\\u0000World\"");
 }
 
-static void test_stringify_array() {
+static void test_stringify_array()
+{
     TEST_ROUNDTRIP("[]");
     TEST_ROUNDTRIP("[null,false,true,123,\"abc\",[1,2,3]]");
 }
 
-static void test_stringify_object() {
+static void test_stringify_object()
+{
     TEST_ROUNDTRIP("{}");
     TEST_ROUNDTRIP("{\"n\":null,\"f\":false,\"t\":true,\"i\":123,\"s\":\"abc\",\"a\":[1,2,3],\"o\":{\"1\":1,\"2\":2,\"3\":3}}");
 }
 
-static void test_stringify() {
+static void test_stringify()
+{
     TEST_ROUNDTRIP("null");
     TEST_ROUNDTRIP("false");
     TEST_ROUNDTRIP("true");
@@ -445,7 +471,8 @@ static void test_stringify() {
         lept_free(&v2);\
     } while(0)
 
-static void test_equal() {
+static void test_equal()
+{
     TEST_EQUAL("true", "true", 1);
     TEST_EQUAL("true", "false", 0);
     TEST_EQUAL("false", "false", 1);
@@ -471,7 +498,8 @@ static void test_equal() {
     TEST_EQUAL("{\"a\":{\"b\":{\"c\":{}}}}", "{\"a\":{\"b\":{\"c\":[]}}}", 0);
 }
 
-static void test_copy() {
+static void test_copy()
+{
     lept_value v1, v2;
     lept_init(&v1);
     lept_parse(&v1, "{\"t\":true,\"f\":false,\"n\":null,\"d\":1.5,\"a\":[1,2,3]}");
@@ -482,7 +510,8 @@ static void test_copy() {
     lept_free(&v2);
 }
 
-static void test_move() {
+static void test_move()
+{
     lept_value v1, v2, v3;
     lept_init(&v1);
     lept_parse(&v1, "{\"t\":true,\"f\":false,\"n\":null,\"d\":1.5,\"a\":[1,2,3]}");
@@ -497,7 +526,8 @@ static void test_move() {
     lept_free(&v3);
 }
 
-static void test_swap() {
+static void test_swap()
+{
     lept_value v1, v2;
     lept_init(&v1);
     lept_init(&v2);
@@ -510,7 +540,8 @@ static void test_swap() {
     lept_free(&v2);
 }
 
-static void test_access_null() {
+static void test_access_null()
+{
     lept_value v;
     lept_init(&v);
     lept_set_string(&v, "a", 1);
@@ -519,7 +550,8 @@ static void test_access_null() {
     lept_free(&v);
 }
 
-static void test_access_boolean() {
+static void test_access_boolean()
+{
     lept_value v;
     lept_init(&v);
     lept_set_string(&v, "a", 1);
@@ -530,7 +562,8 @@ static void test_access_boolean() {
     lept_free(&v);
 }
 
-static void test_access_number() {
+static void test_access_number()
+{
     lept_value v;
     lept_init(&v);
     lept_set_string(&v, "a", 1);
@@ -539,7 +572,8 @@ static void test_access_number() {
     lept_free(&v);
 }
 
-static void test_access_string() {
+static void test_access_string()
+{
     lept_value v;
     lept_init(&v);
     lept_set_string(&v, "", 0);
@@ -549,7 +583,8 @@ static void test_access_string() {
     lept_free(&v);
 }
 
-static void test_access_array() {
+static void test_access_array()
+{
     lept_value a, e;
     size_t i, j;
 
@@ -591,7 +626,7 @@ static void test_access_array() {
     for (i = 0; i < 6; i++)
         EXPECT_EQ_DOUBLE((double)i + 2, lept_get_number(lept_get_array_element(&a, i)));
 
-#if 0
+#if 1
     for (i = 0; i < 2; i++) {
         lept_init(&e);
         lept_set_number(&e, i);
@@ -599,7 +634,7 @@ static void test_access_array() {
         lept_free(&e);
     }
 #endif
-    
+
     EXPECT_EQ_SIZE_T(8, lept_get_array_size(&a));
     for (i = 0; i < 8; i++)
         EXPECT_EQ_DOUBLE((double)i, lept_get_number(lept_get_array_element(&a, i)));
@@ -625,8 +660,9 @@ static void test_access_array() {
     lept_free(&a);
 }
 
-static void test_access_object() {
-#if 0
+static void test_access_object()
+{
+#if 1
     lept_value o, v, *pv;
     size_t i, j, index;
 
@@ -655,7 +691,7 @@ static void test_access_object() {
         }
     }
 
-    index = lept_find_object_index(&o, "j", 1);    
+    index = lept_find_object_index(&o, "j", 1);
     EXPECT_TRUE(index != LEPT_KEY_NOT_EXIST);
     lept_remove_object_value(&o, index);
     index = lept_find_object_index(&o, "j", 1);
@@ -698,7 +734,8 @@ static void test_access_object() {
 #endif
 }
 
-static void test_access() {
+static void test_access()
+{
     test_access_null();
     test_access_boolean();
     test_access_number();
@@ -707,7 +744,8 @@ static void test_access() {
     test_access_object();
 }
 
-int main() {
+int main()
+{
 #ifdef _WINDOWS
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
